@@ -106,8 +106,12 @@ public extension Response.Header {
 extension Response {
 	
 	var httpRep: Data {
-		let combinedHeaders = [Header(name: "Connection", value: "Closed"),
-													 Header(name: "Server", value: "codes.kane.Peasy")] + headers
+        var combinedHeaders: [Header] = []
+        if !headers.contains(where: { $0.name == "Connection" }) {
+            combinedHeaders.append(Header(name: "Connection", value: "Closed"))
+        }
+        combinedHeaders.append(Header(name: "Server", value: "codes.kane.Peasy"))
+        combinedHeaders.append(contentsOf: headers)
 		let string = "HTTP/1.1 \(status.httpRep)\r\n\(combinedHeaders.httpRep)\r\n\r\n"
 		return Data(string.utf8) + body
 	}
