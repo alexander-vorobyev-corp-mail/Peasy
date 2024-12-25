@@ -77,8 +77,8 @@ public extension Response {
 	
 	/// Represents a HTTP header.
 	struct Header: Hashable {
-		let name: String
-		let value: String
+		public let name: String
+		public let value: String
 		
 		public init(name: String, value: String) {
 			self.name = name
