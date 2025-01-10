@@ -69,7 +69,14 @@ final class Socket {
 	func write(_ data: Data) -> Result<Void, DarwinError> {
 		var data = data
 		let bytesSent = data.withUnsafeBytes { send(tag, $0.baseAddress, data.count, 0) }
-		guard bytesSent >= 0 else { return .failure(.init()) }
+		guard bytesSent >= 0 else {
+			if errno == ECONNRESET {
+				close()
+				return .success(())
+			} else {
+				return .failure(.init())
+			}
+		}
 		data.removeSubrange(..<bytesSent)
 		return data.isEmpty ? .success(()) : write(data)
 	}
